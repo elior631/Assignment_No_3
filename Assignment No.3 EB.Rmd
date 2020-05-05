@@ -68,8 +68,10 @@ reducedtree<- rpart(formula_part, data = heart_train , method = "class")
 fancyRpartPlot(reducedtree, caption = NULL)
 ```
 ```{r twomodels_setting}
+# first model output
 firstModel<- rpart(formula = formula_full, data = heart_train, method = "class", minsplit = 2, minbucket = 1)
 printcp(firstModel)
+# second model output
 secondModel<- rpart(formula = formula_full, data = heart_train, method = "class")
 printcp(secondModel)
 ```
@@ -78,4 +80,7 @@ In the first model we used 8 variables and in the second we used 5 variables.
 
 ## Predictions
 
+```{r}
+confusionMatrix(firstModel, heart_test$target)
+```
 
