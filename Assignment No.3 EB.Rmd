@@ -1,0 +1,81 @@
+---
+title: "Assignment No.3"
+author: "Elior Bliah"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    df_print: kable
+    results: hide
+    theme: flatly
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+# Preface
+
+## Open Q1
+
+## Open Q2
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r loading, warning=FALSE, include=FALSE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, magrittr, tidymodels, caret, DALEX, rpart, rattle, rpart.plot, RColorBrewer, ada, doParallel, pROC)
+```
+
+```{r}
+cl <- makePSOCKcluster(5)
+registerDoParallel(cl)
+```
+
+```{r load wine_data+split, include=FALSE}
+urlfile= "https://raw.githubusercontent.com/ml4econ/problem-sets-2020/master/datasets/winequality_red.csv"
+winequality_red<- read_csv(url(urlfile))
+set.seed(167)
+wine_split<- initial_split(winequality_red)
+wine_train<- training(wine_split)
+wine_test<- testing(wine_split)
+
+```
+
+```{r load heart_data+split, include=FALSE}
+urlfile= "https://raw.githubusercontent.com/ml4econ/problem-sets-2020/master/datasets/heart.csv"
+hearts<- read_csv(url(urlfile))
+set.seed(167)
+hearts_split<- initial_split(hearts)
+hearts_split
+heart_train<- training(hearts_split)
+heart_test<- testing(hearts_split)
+```
+
+# Trees
+
+## Open Q1
+
+
+```{r}
+formula_part <- target ~ sex + cp + chol
+formula_full <- target ~ .
+```
+
+```{r reducedFtree}
+reducedtree<- rpart(formula_part, data = heart_train , method = "class")
+fancyRpartPlot(reducedtree, caption = NULL)
+```
+```{r twomodels_setting}
+firstModel<- rpart(formula = formula_full, data = heart_train, method = "class", minsplit = 2, minbucket = 1)
+printcp(firstModel)
+secondModel<- rpart(formula = formula_full, data = heart_train, method = "class")
+printcp(secondModel)
+```
+
+In the first model we used 8 variables and in the second we used 5 variables.
+
+## Predictions
+
+
