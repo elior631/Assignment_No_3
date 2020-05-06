@@ -78,44 +78,33 @@ printcp(secondModel)
 
 In the first model we used 9 variables and in the second we used 4 variables.
 
-## Predictions
-
-```{r include=FALSE}
-# third model output
-thirdModel<- rpart(formula = formula_part, data = heart_train, method = "class", minsplit = 2, minbucket = 1)
-printcp(firstModel)
-# forth model output
-forthModel<- rpart(formula = formula_full, data = heart_train, method = "class")
-printcp(secondModel)
-```
+## Predictions & confusionMatrix
 
 ```{r}
-# Good formula full, train
+predC<- predict(firstModel, heart_train, type = "class")
+
+train_tab <- table(predC, heart_train$target)
+train_tab %>%
+  confusionMatrix()
+
+
 predA<- predict(secondModel, heart_train, type = "class")
 
 train_tab <- table(predA, heart_train$target)
 train_tab %>% 
   confusionMatrix()
 
-# not good
-predB<- predict(secondModel, heart_test, type = "class")
 
-train_tab <- table(predB, heart_test$target)
+predD<- predict(firstModel, heart_test, type = "class")
+
+train_tab <- table(predD, heart_test$target)
 train_tab %>% 
   confusionMatrix()
 
+  
+predB<- predict(secondModel, heart_test, type = "class")
 
-# Good formula full, train
-predC<- predict(forthModel, heart_train, type = "class")
-
-train_tab <- table(predC, heart_train$target)
-train_tab %>%
-  confusionMatrix()
-
-# not good
-predD<- predict(forthModel, heart_test, type = "class")
-
-train_tab <- table(predD, heart_test$target)
+train_tab <- table(predB, heart_test$target)
 train_tab %>% 
   confusionMatrix()
 
