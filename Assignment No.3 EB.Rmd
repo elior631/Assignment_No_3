@@ -110,3 +110,23 @@ train_tab %>%
 
 ```
 
+We can see from the results that from both models the train set predict better than the the test set. that may be due to the greater amount of observation that the train set has. 
+
+## Pruning
+```{r Pruning}
+thirdModel<- rpart(formula = formula_full, data = heart_train, method = "class", cp = 0.03)
+
+predE<-predict(thirdModel, heart_train, type = "class")
+
+train_tab <- table(predE, heart_train$target)
+train_tab %>% 
+  confusionMatrix()
+
+predF<-predict(thirdModel, heart_test, type = "class")
+
+train_tab <- table(predF, heart_test$target)
+train_tab %>% 
+  confusionMatrix()
+```
+
+We can see that the accuracy is very simmilar. that mean when the complexity parameter is close to zero we have a fully saturated tree. In our case, without any restrictions we force the model (we possibly overfit it) we acheive an accuary of 80% of predicting heart attack.
