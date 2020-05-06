@@ -47,7 +47,7 @@ wine_test<- testing(wine_split)
 urlfile= "https://raw.githubusercontent.com/ml4econ/problem-sets-2020/master/datasets/heart.csv"
 hearts<- read_csv(url(urlfile))
 set.seed(167)
-hearts_split<- initial_split(hearts)
+hearts_split<- initial_split(hearts, prop=0.7)
 hearts_split
 heart_train<- training(hearts_split)
 heart_test<- testing(hearts_split)
@@ -76,12 +76,48 @@ secondModel<- rpart(formula = formula_full, data = heart_train, method = "class"
 printcp(secondModel)
 ```
 
-In the first model we used 8 variables and in the second we used 5 variables.
+In the first model we used 9 variables and in the second we used 4 variables.
 
 ## Predictions
 
-```{r}
-confusionMatrix(firstModel, heart_test$target)
+```{r include=FALSE}
+# third model output
+thirdModel<- rpart(formula = formula_part, data = heart_train, method = "class", minsplit = 2, minbucket = 1)
+printcp(firstModel)
+# forth model output
+forthModel<- rpart(formula = formula_full, data = heart_train, method = "class")
+printcp(secondModel)
 ```
-try to push
+
+```{r}
+# Good formula full, train
+predA<- predict(secondModel, heart_train, type = "class")
+
+train_tab <- table(predA, heart_train$target)
+train_tab %>% 
+  confusionMatrix()
+
+# not good
+predB<- predict(secondModel, heart_test, type = "class")
+
+train_tab <- table(predB, heart_test$target)
+train_tab %>% 
+  confusionMatrix()
+
+
+# Good formula full, train
+predC<- predict(forthModel, heart_train, type = "class")
+
+train_tab <- table(predC, heart_train$target)
+train_tab %>%
+  confusionMatrix()
+
+# not good
+predD<- predict(forthModel, heart_test, type = "class")
+
+train_tab <- table(predD, heart_test$target)
+train_tab %>% 
+  confusionMatrix()
+
+```
 
