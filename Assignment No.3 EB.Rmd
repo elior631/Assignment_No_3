@@ -136,7 +136,7 @@ train_tab %>%
 
 We can see that the accuracy is very simmilar both in trainig and in the testing sets. that mean when the complexity parameter is close to zero we have a fully saturated tree. In our case, without any restrictions we force the model (we possibly overfit it) we acheive an accuary of 80% of predicting heart attack. that mean our model is good and we have trained well the model. NO OVERFITING
 
-# K- Nearest Neighbors (KNN)
+#  KNN , Random F, Boosting and bagging
 
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
@@ -190,12 +190,55 @@ rf_explainer <- explain(rf, label="rf",
 ### perfomance 
 
 ```{r}
-library(DALEX)
 set.seed(167)
 mp_rf <- model_performance(rf_explainer)
 plot(mp_rf)
 plot(mp_rf, geom = "boxplot")
+
+```
+
+### model importance 
+Answer : we are not able to compute other model since we didn't studied other model. however, we can see from the polts in the questions that the random forest model is the best because he has the lower rmse amd the lowest residuals. 
+
+### Feature importance
+
+```{r}
 importance_rf <- variable_importance(rf_explainer)
 plot(importance_rf)
+```
+Answer: we can see that if we drop the cp that the thal variables we will loss alot of information in our model.
+
+### Partial dependence
+
+```{r message=FALSE, warning=FALSE}
+partial <- variable_effect(rf_explainer, colnames(heart_explain) , type = "partial_dependency")
+plot(partial)
+```
+
+We can see that the 'thalach' and the 'chol' features are behaving differently in the knn model than other. 
+
+### Break Dowm Profile
+
+```{r}
+new_cust <- heart_train[1, ] %>% as.data.frame()
+new_cust_rf  <- predict_parts_break_down(rf_explainer, new_observation = new_cust)
+plot(new_cust_rf)
+```
+
+we can see that in the random forest model the intercept influence most the total prediction. Afterward, the cp affect it next greatly. please note that this is only the
+first row.
+
+### Predict
+```{r}
+models_predictions <- data.frame(
+  rf = predict(rf, newdata = heart_test),
+  truth = heart_test$target
+)
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+roc_rf <- roc(models_predictions$rf, heart_test$target) 
+
+plot(roc_rf, col = "#00AEEF")
 ```
 
